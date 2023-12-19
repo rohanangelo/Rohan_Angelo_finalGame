@@ -2,19 +2,25 @@
 
 # Project title: Jetpack Joyride
 
+# Sources:
 # https://www.youtube.com/watch?v=427mSthTxQQ&ab_channel=LeMasterTech
 # kidscancode
+# Mr. Cozort
+# ChatGPT (used to fix issues with collision, did not work)
 '''
 Goals for final project:
-create movable obstacles
 character moves up and down with jetpack animation
-create background
+create "moving screen"
+fix collision issues
 '''
+
 
 # import libraries and modules
 import random
 import pygame
 from settings import *
+import os
+import time
 pygame.init()
 
 # create screen
@@ -48,7 +54,10 @@ booster = False
 # y velocity and gravity
 y_velocity = 0
 gravity = 0.5
-# top platform and bottom platform
+# running legs
+counter = 0
+# hitbox
+hitbox = "green"
 
 
 
@@ -79,7 +88,7 @@ def draw_screen(line_list):
 def draw_player():
     play = pygame.rect.Rect((120, player_y + 10), (25, 60))
     # hitbox
-    # pygame.draw.rect(screen, "green", play, 5)
+    pygame.draw.rect(screen, "green", play, 5)
     # jetpack booster with flames
     if player_y < init_y or pause:
         if booster:
@@ -89,6 +98,24 @@ def draw_player():
         # legs
         pygame.draw.rect(screen, "yellow", [128, player_y + 60, 10, 20], 0, 3)
         pygame.draw.rect(screen, "orange", [130, player_y + 60, 10, 20], 0, 3)
+    # moving legs
+    else:
+        if counter < 10:
+            # orange leg forward, yellow leg back
+            pygame.draw.line(screen, "yellow", (128, player_y + 60), (140, player_y + 80), 10)
+            pygame.draw.line(screen, "orange", (130, player_y + 60), (120, player_y + 80), 10)
+        elif 10 <= counter < 20:
+            # legs in the middle
+            pygame.draw.rect(screen, "yellow", [128, player_y + 60, 10, 20], 0, 3)
+            pygame.draw.rect(screen, "orange", [130, player_y + 60, 10, 20], 0, 3)
+        elif 20 <= counter < 30:
+            # orange leg back, yellow leg forward
+            pygame.draw.line(screen, "yellow", (128, player_y + 60), (120, player_y + 80), 10)
+            pygame.draw.line(screen, "orange", (130, player_y + 60), (140, player_y + 80), 10)
+        else: 
+            pygame.draw.rect(screen, "yellow", [128, player_y + 60, 10, 20], 0, 3)
+            pygame.draw.rect(screen, "orange", [130, player_y + 60, 10, 20], 0, 3)
+
     # jetpack
     pygame.draw.rect(screen, "white", [100, player_y + 20, 20, 30], 0, 5)
     # player main body, face, eyes, head
@@ -97,13 +124,16 @@ def draw_player():
     pygame.draw.circle(screen, "orange", (138, player_y + 12), 3)
     return play
 
+
+    
+
 # collision
 def check_colliding():
     # see that player collides with top and bottom
     coll = [False, False]
     if player.colliderect(bot_plat):
         coll[0] = True
-    elif player.colliderect(top_plat):
+    elif player. colliderect(top_plat):
         coll[1] = True
     return coll
 
@@ -114,10 +144,14 @@ def check_colliding():
 run = True
 while run:
     timer.tick(fps)
+    if counter < 40:
+        counter += 1
+    else:
+        counter = 0
     lines = draw_screen(lines)
     bot_plat = draw_screen(lines)
     top_plat = draw_screen(lines)
-    player = draw_player()                       
+    player = draw_player()          
     colliding = check_colliding()
 
     for event in pygame.event.get():
@@ -141,7 +175,7 @@ while run:
         if (colliding[0] and y_velocity > 0) or (colliding[1] and y_velocity < 0):
             y_velocity = 0
 
-
+            
         player_y += y_velocity
     
     pygame.display.flip()
