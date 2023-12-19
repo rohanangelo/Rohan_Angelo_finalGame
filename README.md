@@ -4,7 +4,7 @@ Jetpack Joyride
 
 ## Description
  
-My project is a jetpack joyride game with some modificiations; I am going to add a machine gun jetpack and different obstacles than the original game.
+My project is a jetpack joyride game with some modificiations; I am going to add a fire jetpack and different obstacles than the original game.
  
 ## Getting Started
  
